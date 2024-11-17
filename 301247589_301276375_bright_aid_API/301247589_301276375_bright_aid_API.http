@@ -1,0 +1,6 @@
+@_301247589_301276375_bright_aid_API_HostAddress = http://localhost:5027
+
+GET {{_301247589_301276375_bright_aid_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
