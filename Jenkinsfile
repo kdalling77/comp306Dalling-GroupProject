@@ -1,13 +1,14 @@
 pipeline {
     agent any
 
+    environment {
+        
+        AWS_REGION = 'us-east-1' // AWS Region
+        AWS_ACCOUNT_ID = '149536454064' // AWS Account ID
+        ECR_REPO_NAME = 'bright_aid_api' // ECR repository name
+    }
+    
     stages {
-
-        environment {
-            AWS_REGION = 'us-east-1' // AWS Region
-            AWS_ACCOUNT_ID = '149536454064' // AWS Account ID
-            ECR_REPO_NAME = 'bright_aid_api' // ECR repository name
-        }
         
         stage('Checkout') {
             steps {
