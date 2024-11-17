@@ -24,7 +24,7 @@ namespace _301247589_301276375_bright_aid_API.Controllers
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 56),
+                TemperatureC = Random.Shared.Next(-20, 57),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
