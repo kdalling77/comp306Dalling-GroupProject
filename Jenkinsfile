@@ -32,7 +32,9 @@ pipeline {
 
          stage('Run Tests') {
 
-             // Apply tests here
+             steps{
+                 // Apply tests here
+             }
 
          }
 
