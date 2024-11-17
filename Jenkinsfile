@@ -37,17 +37,20 @@ pipeline {
          }
 
          stage('Build & Push image to AWS ECR') {
-            // Authenticate the Docker client to AWS ECR
-            sh 'aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com'
-            
-             // Build the Docker image using the specified Dockerfile
-             sh 'docker build -f ./301247589_301276375_bright_aid_API/Dockerfile -t bright_aid_api .'
 
-             // Tag the Docker image
-             sh 'docker tag bright_aid_api:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
-
-            // Push the Docker image to AWS ECR
-            sh 'docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
+             steps{
+                // Authenticate the Docker client to AWS ECR
+                sh 'aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com'
+                
+                 // Build the Docker image using the specified Dockerfile
+                 sh 'docker build -f ./301247589_301276375_bright_aid_API/Dockerfile -t bright_aid_api .'
+    
+                 // Tag the Docker image
+                 sh 'docker tag bright_aid_api:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
+    
+                // Push the Docker image to AWS ECR
+                sh 'docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
+             }
          }
     }
 
