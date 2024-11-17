@@ -29,8 +29,16 @@ pipeline {
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
+
+       stage('Run Tests') {
+            
+           steps {
+                // Create tests here
+                 echo 'Mock up Tests here'
+            }
+       }
         
-         stage('Build & Push image to AWS ECR') {
+       stage('Build & Push image to AWS ECR') {
 
              steps{
                 // Authenticate the Docker client to AWS ECR
