@@ -29,15 +29,7 @@ pipeline {
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
-
-         stage('Run Tests') {
-
-             steps{
-                 // Apply tests here
-             }
-
-         }
-
+        
          stage('Build & Push image to AWS ECR') {
 
              steps{
