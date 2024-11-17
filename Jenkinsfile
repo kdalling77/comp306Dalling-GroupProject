@@ -6,6 +6,10 @@ pipeline {
         AWS_REGION = 'us-east-1' // AWS Region
         AWS_ACCOUNT_ID = '149536454064' // AWS Account ID
         ECR_REPO_NAME = 'bright_aid_api' // ECR repository name
+        CLUSTER_NAME = 'bright-aid' // ECS Cluster Name
+        SERVICE_NAME = 'bright-aid-service' // ECS Service Name
+        TASK_DEFINITION_REVISION = 'bright-aid:2' // Task Definition Revision
+        DESIRED_COUNT = 2 // Desired Count of ECS Tasks
     }
     
     stages {
@@ -61,6 +65,21 @@ pipeline {
                 sh 'docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
              }
          }
+
+         stage('Deploy to AWS ECS Service') {
+            steps {
+                // Update the ECS service with the new task definition
+                sh '''
+                aws ecs update-service \
+                    --cluster $CLUSTER_NAME \
+                    --service $SERVICE_NAME \
+                    --task-definition $TASK_DEFINITION_REVISION \
+                    --desired-count $DESIRED_COUNT \
+                    --force-new-deployment \
+                    --region $AWS_REGION
+                '''
+            }
+        }
     }
 
 }
