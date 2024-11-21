@@ -10,6 +10,7 @@ using _301247589_301276375_bright_aid_API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using AutoMapper;
 using NuGet.Protocol.Core.Types;
+using _301247589_301276375_bright_aid_API.DTOs;
 
 namespace _301247589_301276375_bright_aid_API.Controllers
 {
@@ -28,31 +29,40 @@ namespace _301247589_301276375_bright_aid_API.Controllers
 
         // GET: api/Students
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+        public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
-            return Ok(await _repository.GetAllStudentsAsync());
+            var students = await _repository.GetAllStudentsAsync();
+            var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
+            //return Ok(students);
+            return Ok(studentDtos);
+
+
         }
 
         // GET: api/Students/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(long id)
+        public async Task<ActionResult<StudentDto>> GetStudent(long id)
         {
             var student = await _repository.GetStudentByIdAsync(id);
             if (student == null)
             {
                 return NotFound();
             }
-            return student;
+            var studentDto = _mapper.Map<StudentDto>(student);
+            return Ok(studentDto);
         }
 
         // PUT: api/Students/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(long id, Student student)
+        public async Task<IActionResult> PutStudent(long id, [FromBody] StudentForUpdateDto studentDto)
         {
-            if (id != student.Id)
+            if (!await _repository.StudentExistsAsync(id))
             {
-                return BadRequest();
+                return NotFound();
             }
+
+            var student = _mapper.Map<Student>(studentDto);
+            student.Id = id; // Ensure the ID remains consistent
 
             await _repository.UpdateStudentAsync(student);
 
@@ -74,21 +84,29 @@ namespace _301247589_301276375_bright_aid_API.Controllers
 
             return NoContent();
         }
-
         // POST: api/Students
         [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        public async Task<ActionResult<StudentDto>> PostStudent([FromBody] StudentForCreationDto studentDto)
         {
+            var student = _mapper.Map<Student>(studentDto);
             await _repository.AddStudentAsync(student);
             await _repository.SaveAsync();
 
-            return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
+            var createdStudent = _mapper.Map<StudentDto>(student);
+
+            return CreatedAtAction(nameof(GetStudent), new { id = createdStudent.Id }, createdStudent);
         }
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(long id)
         {
+            var student = await _repository.GetStudentByIdAsync(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
             await _repository.DeleteStudentAsync(id);
             await _repository.SaveAsync();
             return NoContent();
