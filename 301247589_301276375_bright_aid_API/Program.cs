@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using _301247589_301276375_bright_aid_API.Models;
+using _301247589_301276375_bright_aid_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Register the StudentRepository
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
 // Register AutoMapper with the DI container
 builder.Services.AddAutoMapper(typeof(Program));  // Or use the assembly where your profiles are defined
