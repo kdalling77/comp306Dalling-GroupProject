@@ -33,7 +33,7 @@ namespace _301247589_301276375_bright_aid_API.Controllers
         {
             var Donors = await _repository.GetAllDonorsAsync();
             var DonorDtos = _mapper.Map<IEnumerable<DonorDto>>(Donors);
-            //return Ok(Donors);
+
             return Ok(DonorDtos);
 
 

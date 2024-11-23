@@ -2,9 +2,23 @@
 {
     public class StudentForCreationDto
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? CountryOfOrigin { get; set; }
+        public string? Gender { get; set; }
+
+    
+        public string? InstitutionName { get; set; }
+        public string? ProgramOfStudy { get; set; }
+        public int? YearOfStudy { get; set; }
+        public double? GPA { get; set; } 
+
+     
+        public decimal? RequestedAmount { get; set; }
+        public string? FinancialNeedDescription { get; set; } 
+
+        public string? RegistrationDate { get; set; }
     }
 }

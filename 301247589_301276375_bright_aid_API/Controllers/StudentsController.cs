@@ -33,7 +33,7 @@ namespace _301247589_301276375_bright_aid_API.Controllers
         {
             var students = await _repository.GetAllStudentsAsync();
             var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
-            //return Ok(students);
+ 
             return Ok(studentDtos);
 
 
