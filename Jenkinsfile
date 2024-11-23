@@ -8,7 +8,7 @@ pipeline {
         ECR_REPO_NAME = 'bright_aid_api' // ECR repository name
         CLUSTER_NAME = 'bright-aid' // ECS Cluster Name
         SERVICE_NAME = 'bright-aid-service' // ECS Service Name
-        TASK_DEFINITION_REVISION = 'bright-aid:2' // Task Definition Revision
+        TASK_DEFINITION_REVISION = 'bright-aid:3' // Task Definition Revision
         DESIRED_COUNT = 2 // Desired Count of ECS Tasks
     }
     
