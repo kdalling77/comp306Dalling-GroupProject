@@ -14,12 +14,12 @@ namespace _301247589_301276375_bright_aid_API.Services
 
         public async Task<IEnumerable<Donor>> GetAllDonorsAsync()
         {
-            return await _context.Donors.ToListAsync();
+            return await _context.Donors.Where(d => d.IsActive).ToListAsync();
         }
 
         public async Task<Donor> GetDonorByIdAsync(long id)
         {
-            return await _context.Donors.FirstOrDefaultAsync(d => d.DonorId == id);
+            return await _context.Donors.FirstOrDefaultAsync(d => d.DonorId == id && d.IsActive);
         }
 
         public async Task AddDonorAsync(Donor Donor)
@@ -37,7 +37,8 @@ namespace _301247589_301276375_bright_aid_API.Services
             var Donor = await GetDonorByIdAsync(id);
             if (Donor != null)
             {
-                _context.Donors.Remove(Donor);
+                Donor.IsActive = false; // Mark as inactive
+                _context.Entry(Donor).State = EntityState.Modified;
             }
         }
 
