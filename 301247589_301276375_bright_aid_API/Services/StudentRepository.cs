@@ -17,12 +17,12 @@ namespace _301247589_301276375_bright_aid_API.Services
 
         public async Task<IEnumerable<Student>> GetAllStudentsAsync()
         {
-            return await _context.Students.ToListAsync();
+            return await _context.Students.Where(s => s.IsActive).ToListAsync();
         }
 
         public async Task<Student> GetStudentByIdAsync(long id)
         {
-            return await _context.Students.FirstOrDefaultAsync(s => s.Id == id);
+            return await _context.Students.FirstOrDefaultAsync(s => s.Id == id && s.IsActive);
         }
 
         public async Task AddStudentAsync(Student student)
@@ -40,7 +40,8 @@ namespace _301247589_301276375_bright_aid_API.Services
             var student = await GetStudentByIdAsync(id);
             if (student != null)
             {
-                _context.Students.Remove(student);
+                student.IsActive = false; // Mark as inactive
+                _context.Entry(student).State = EntityState.Modified;
             }
         }
 
