@@ -30,5 +30,7 @@ namespace _301247589_301276375_bright_aid_API.Models
         public string? PreferredRegion { get; set; } // Preferred province or city to support (e.g., Ontario, Toronto)
 
         public bool? IsRecurringDonor { get; set; } // Indicates if the donor intends to make recurring contributions
+
+        public bool IsActive { get; set; } = true; // Default to true (active)
     }
 }

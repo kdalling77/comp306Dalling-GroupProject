@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _301247589_301276375_bright_aid_API.Models;
 
@@ -11,9 +12,11 @@ using _301247589_301276375_bright_aid_API.Models;
 namespace _301247589_301276375_bright_aid_API.Migrations.Donor
 {
     [DbContext(typeof(DonorContext))]
-    partial class DonorContextModelSnapshot : ModelSnapshot
+    [Migration("20241203044747_AddedSoftDeleteToDonorTbl")]
+    partial class AddedSoftDeleteToDonorTbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
