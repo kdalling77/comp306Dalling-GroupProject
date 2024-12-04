@@ -63,7 +63,7 @@ pipeline {
                 sh 'docker pull $DOCKER_REPO_NAME:qat'
 
                 // Run the Docker container on the local machine
-                sh 'docker run -d --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
+                sh 'docker run -d -p 3002:8080 $DOCKER_REPO_NAME:qat'
             }
         }
 
