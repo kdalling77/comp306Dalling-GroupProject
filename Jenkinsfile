@@ -22,6 +22,15 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            def scannerHome = tool 'SonarScanner for .NET'
+            withSonarQubeEnv() {
+                sh "dotnet ${scannerHome}\\SonarScanner.MSBuild.dll begin /k:\"bright_aid_api\""
+                sh "dotnet build"
+                sh "dotnet ${scannerHome}\\SonarScanner.MSBuild.dll end"
+            }
+        }
+
         stage('Build .NET Core Project') {
             steps {
                 // Restores the NuGet packages for the .NET Core project
