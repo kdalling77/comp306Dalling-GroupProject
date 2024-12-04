@@ -58,6 +58,12 @@ pipeline {
 
                 // push the docker image to dockerhub
                 sh 'docker push $DOCKER_REPO_NAME:qat'
+
+                 // Pull the image back from Docker Hub to the local machine
+                sh 'docker pull $DOCKER_REPO_NAME:qat'
+
+                // Run the Docker container on the local machine
+                sh 'docker run -d --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
             }
         }
 
