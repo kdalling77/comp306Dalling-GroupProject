@@ -11,7 +11,7 @@ pipeline {
         DESIRED_COUNT = 2 // Desired Count of ECS Tasks
         DOCKER_USERNAME = 'haneefmhmmd' // Manually set your Docker Hub username
         DOCKER_REPO_NAME = 'haneefmhmmd/bright_aid_api'
-
+        SONAR_HOST_URL = 'http://localhost:9000/'
     }
 
     stages {
@@ -21,6 +21,20 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kdalling77/comp306Dalling-GroupProject.git']])
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool name: 'SonarScanner for MSBuild'
+                    withSonarQubeEnv() {
+                        bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" begin /k:\"bright_aid_api\""
+                        bat "dotnet build"
+                        bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" end"
+                    }
+                }
+            }
+        }
+
 
         stage('Build .NET Core Project') {
             steps {
