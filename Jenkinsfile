@@ -9,7 +9,7 @@ pipeline {
         SERVICE_NAME = 'bright-aid-service' // ECS Service Name
         TASK_DEFINITION_REVISION = 'bright-aid:3' // Task Definition Revision
         DESIRED_COUNT = 2 // Desired Count of ECS Tasks
-        DOCKER_USERNAME = 'kdalling' 
+        DOCKER_CREDENTIALS_ID = 'my-docker-hub-credentials'
         DOCKER_REPO_NAME = 'kdalling/bright_aid_api'
         SONAR_HOST_URL = 'http://localhost:9000/'
     }
@@ -58,11 +58,9 @@ pipeline {
 
         stage('Deploy to QAT Env') {
             steps {
-                // Login to dockerhub
-                withCredentials([string(credentialsId: 'my-docker-hub-credentials', variable: 'DOCKER_PASSWORD')]) {
-                    sh """
-                    echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
-                    """
+                // Login to dockerhub using credentials stored in Jenkins
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
                 }
                 // build docker image
                 sh 'docker build -f ./301247589_301276375_bright_aid_API/Dockerfile -t bright_aid_api .'
@@ -77,7 +75,7 @@ pipeline {
                 sh 'docker pull $DOCKER_REPO_NAME:qat'
 
                 // Stop and remove existing container if it exists
-               sh 'docker ps -q -f name=bright_aid_api_container | grep -q . && docker stop bright_aid_api_container && docker rm bright_aid_api_container || echo "No existing container to stop and remove"'
+                sh 'docker ps -q -f name=bright_aid_api_container | grep -q . && docker stop bright_aid_api_container && docker rm bright_aid_api_container || echo "No existing container to stop and remove"'
 
                 // Run the Docker container on the local machine
                 sh 'docker run -d --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
