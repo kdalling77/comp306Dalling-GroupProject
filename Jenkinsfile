@@ -77,7 +77,7 @@ pipeline {
                 // Stop and remove existing container if it exists
                 sh 'docker ps -q -f name=bright_aid_api_container | grep -q . && docker stop bright_aid_api_container && docker rm bright_aid_api_container || echo "No existing container to stop and remove"'
 
-                // Run the Docker container on the local machine
+                // Run the Docker container on the local machine.
                 // sh 'docker run -d --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
 				sh 'docker run -itd --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
             }
