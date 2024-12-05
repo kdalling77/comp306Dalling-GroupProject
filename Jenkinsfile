@@ -10,7 +10,9 @@ pipeline {
         DESIRED_COUNT = 2 // Desired Count of ECS Tasks
         DOCKER_CREDENTIALS_ID = 'my-docker-hub-credentials'
         DOCKER_REPO_NAME = 'kdalling/bright_aid_api'
-        SONAR_HOST_URL = 'http://localhost:9000/'
+        SONAR_HOST_URL = 'http://localhost:9000/' // SonarQube host URL
+        SONAR_PROJECT_KEY = 'BrightAidAPI-Sonar' // SonarQube project key
+        SONAR_TOKEN = 'squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172' // SonarQube authentication token
     }
     stages {
         stage('Checkout') {
@@ -19,6 +21,7 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kdalling77/comp306Dalling-GroupProject.git']])
             }
         }
+		
         //    stage('SonarQube Analysis') {
         //        steps {
         //            script {
@@ -31,6 +34,23 @@ pipeline {
         //            }
         //        }
         //    }
+		
+		stage('Static Code Analysis with SonarQube') {
+            steps {
+                // Run SonarQube analysis
+                withSonarQubeEnv('SonarQube') {
+                    sh """
+                        dotnet sonarscanner begin \
+                        /k:${SONAR_PROJECT_KEY} \
+                        /d:sonar.host.url=${SONAR_HOST_URL} \
+                        /d:sonar.login=${SONAR_TOKEN}
+                        dotnet build --configuration Release
+                        dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}
+                    """
+                }
+            }
+        }
+		
         stage('Build .NET Core Project') {
             steps {
                 // Restores the NuGet packages for the .NET Core project
