@@ -23,11 +23,13 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            def scannerHome = tool 'SonarScanner for MSBuild'
-            withSonarQubeEnv() {
-                bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:\"bright_aid_api\""
-                bat "dotnet build"
-                bat "${scannerHome}\\SonarScanner.MSBuild.exe end"
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    def scannerHome = tool 'SonarScanner for MSBuild'
+                    bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:project-key"
+                    bat "msbuild /t:Rebuild"
+                    bat "${scannerHome}\\SonarScanner.MSBuild.exe end"
+                }
             }
         }
 
