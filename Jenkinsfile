@@ -56,7 +56,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to QAT Env') {
+        stage('Deploy to DEV Env') {
             steps {
                 // Login to dockerhub using credentials stored in Jenkins
                 withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -66,20 +66,19 @@ pipeline {
                 sh 'docker build -f ./301247589_301276375_bright_aid_API/Dockerfile -t bright_aid_api .'
 
                 // Tag the Docker image
-                sh 'docker tag bright_aid_api:latest $DOCKER_REPO_NAME:qat'
+                sh 'docker tag bright_aid_api:latest $DOCKER_REPO_NAME:dev'
 
                 // push the docker image to dockerhub
-                sh 'docker push $DOCKER_REPO_NAME:qat'
+                sh 'docker push $DOCKER_REPO_NAME:dev'
 
                  // Pull the image back from Docker Hub to the local machine
-                sh 'docker pull $DOCKER_REPO_NAME:qat'
+                sh 'docker pull $DOCKER_REPO_NAME:dev'
 
                 // Stop and remove existing container if it exists
                 sh 'docker ps -q -f name=bright_aid_api_container | grep -q . && docker stop bright_aid_api_container && docker rm bright_aid_api_container || echo "No existing container to stop and remove"'
 
-                // Run the Docker container on the local machine..
-                // sh 'docker run -d --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
-				sh 'docker run -itd --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:qat'
+                // Run the Docker container on the local machine.
+				sh 'docker run -itd --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:dev'
             }
         }
 
