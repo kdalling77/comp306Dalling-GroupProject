@@ -9,8 +9,8 @@ pipeline {
         SERVICE_NAME = 'bright-aid-service' // ECS Service Name
         TASK_DEFINITION_REVISION = 'bright-aid:3' // Task Definition Revision
         DESIRED_COUNT = 2 // Desired Count of ECS Tasks
-        DOCKER_USERNAME = 'haneefmhmmd' // Manually set your Docker Hub username
-        DOCKER_REPO_NAME = 'haneefmhmmd/bright_aid_api'
+        DOCKER_USERNAME = 'kdalling' 
+        DOCKER_REPO_NAME = 'kdalling/bright_aid_api'
         SONAR_HOST_URL = 'http://localhost:9000/'
     }
 
@@ -22,18 +22,18 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def scannerHome = tool name: 'SonarScanner for MSBuild'
-                    withSonarQubeEnv() {
-                        bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" begin /k:\"bright_aid_api\""
-                        bat "dotnet build"
-                        bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" end"
-                    }
-                }
-            }
-        }
+    //    stage('SonarQube Analysis') {
+    //        steps {
+    //            script {
+    //                def scannerHome = tool name: 'SonarScanner for MSBuild'
+    //                withSonarQubeEnv() {
+    //                    bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" begin /k:\"bright_aid_api\""
+    //                    bat "dotnet build"
+    //                    bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" end"
+    //                }
+    //            }
+    //        }
+    //    }
 
 
         stage('Build .NET Core Project') {
@@ -59,7 +59,7 @@ pipeline {
         stage('Deploy to QAT Env') {
             steps {
                 // Login to dockerhub
-                withCredentials([string(credentialsId: 'CredentialID_DockerHubPWD', variable: 'DOCKER_PASSWORD')]) {
+                withCredentials([string(credentialsId: 'my-docker-hub-credentials', variable: 'DOCKER_PASSWORD')]) {
                     sh """
                     echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
                     """
