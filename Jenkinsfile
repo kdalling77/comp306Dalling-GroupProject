@@ -24,14 +24,28 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                script {
+                    // Declare and use the tool
                     def scannerHome = tool 'SonarScanner for MSBuild'
                     bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:project-key"
-                    bat "msbuild /t:Rebuild"
+                    bat "dotnet build"
                     bat "${scannerHome}\\SonarScanner.MSBuild.exe end"
                 }
             }
         }
+                stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner for MSBuild'
+                    withSonarQubeEnv() {
+                        bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:\"bright_aid_api\""
+                        bat "dotnet build"
+                        bat "${scannerHome}\\SonarScanner.MSBuild.exe end"
+                    }
+                }
+            }
+        }
+
 
         stage('Build .NET Core Project') {
             steps {
