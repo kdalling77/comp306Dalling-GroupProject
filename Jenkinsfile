@@ -12,7 +12,7 @@ pipeline {
         DOCKER_REPO_NAME = 'kdalling/bright_aid_api'
         SONAR_HOST_URL = 'http://localhost:9000/' // SonarQube host URL
         SONAR_PROJECT_KEY = 'BrightAidAPI-Sonar' // SonarQube project key
-        SONAR_TOKEN = 'squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172' // SonarQube authentication token
+        SONAR_AUTH_TOKEN = credentials('sonarqube-token')
     }
     stages {
         stage('Checkout') {
@@ -40,14 +40,11 @@ pipeline {
             steps {
                 // Run SonarQube analysis
                 withSonarQubeEnv('SonarQube') {
-                    sh """
-                        dotnet sonarscanner begin \
-                        /k:${SONAR_PROJECT_KEY} \
-                        /d:sonar.host.url=${SONAR_HOST_URL} \
-                        /d:sonar.login=${SONAR_TOKEN}
-                        dotnet build --configuration Release
-                        dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}
-                    """
+                     sh '''
+						dotnet sonarscanner begin /k:"BrightAidAPI-Sonar" \
+						/d:sonar.host.url="http://localhost:9000" \
+						/d:sonar.login="${SONAR_AUTH_TOKEN}"
+					 '''
                 }
             }
         }
