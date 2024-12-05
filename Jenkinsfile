@@ -43,7 +43,7 @@ pipeline {
                      sh 'dotnet sonarscanner begin -k:"BrightAidAPI-Sonar" -d:sonar.host.url="http://localhost:9000" -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
 					 sh 'dotnet build --configuration Release'
 					 sh 'dotnet test --no-build'
-					 sh 'dotnet sonarscanner end /d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
+					 sh 'dotnet sonarscanner end -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
 				}
             }
         }
