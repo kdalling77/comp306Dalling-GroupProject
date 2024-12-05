@@ -35,6 +35,7 @@ pipeline {
         //        }
         //    }
 		
+		// 	.
 		stage('Static Code Analysis with SonarQube') {
             steps {
                 // Run SonarQube analysis
