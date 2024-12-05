@@ -25,11 +25,11 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool name: 'SonarScanner for MSBuild', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    def scannerHome = tool name: 'SonarScanner for MSBuild'
                     withSonarQubeEnv() {
-                        sh "${scannerHome}\\SonarScanner.MSBuild.dll begin /k:\"bright_aid_api\""
-                        sh "dotnet build"
-                        sh "${scannerHome}\\SonarScanner.MSBuild.dll end"
+                        bat "\"${scannerHome}\\SonarScanner.MSBuild.dll\" begin /k:\"bright_aid_api\""
+                        bat "dotnet build"
+                        bat "\"${scannerHome}\\SonarScanner.MSBuild.dll\" end"
                     }
                 }
             }
