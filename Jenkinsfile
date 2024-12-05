@@ -40,11 +40,7 @@ pipeline {
             steps {
                 // Run SonarQube analysis
                 withSonarQubeEnv('SonarQube') {
-                     sh '''
-						dotnet sonarscanner begin /k:"BrightAidAPI-Sonar" \
-						/d:sonar.host.url="http://localhost:9000" \
-						/d:sonar.login="${SONAR_AUTH_TOKEN}"
-					 '''
+                     sh 'dotnet sonarscanner begin -k:"BrightAidAPI-Sonar" -d:sonar.host.url="http://localhost:9000" -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
                 }
             }
         }
