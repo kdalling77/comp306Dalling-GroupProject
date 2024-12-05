@@ -55,10 +55,11 @@ pipeline {
                 echo 'Mock up Tests here'
             }
         }
-
-        stage('Deploy to DEV Env') {
+		
+		stage('Deliver to Dockerhub') {
             steps {
-                // Login to dockerhub using credentials stored in Jenkins
+			
+				// Login to dockerhub using credentials stored in Jenkins
                 withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
                 }
@@ -70,8 +71,15 @@ pipeline {
 
                 // push the docker image to dockerhub
                 sh 'docker push $DOCKER_REPO_NAME:dev'
+			
+			}
+			
+		}
+		
+        stage('Deploy to DEV Env') {
+            steps {
 
-                 // Pull the image back from Docker Hub to the local machine
+                 // Pull the image from Docker Hub to the local machine
                 sh 'docker pull $DOCKER_REPO_NAME:dev'
 
                 // Stop and remove existing container if it exists
@@ -81,11 +89,25 @@ pipeline {
 				sh 'docker run -itd --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:dev'
             }
         }
+		
+		stage('Deploy to QAT Env') {
+            steps {
+				echo 'Mocked up QAT Env running successfully'
+			}
+			
+		}
+		
+		stage('Deploy to Staging Env') {
+            steps {
+				echo 'Mocked up Staging Env running successfully'
+			}
+			
+		}
 
-        stage('Build & Push image to AWS ECR') {
-
-              steps{
-                 // Authenticate the Docker client to AWS ECR
+		stage('Deploy to Production Env') {
+			 steps {
+			 
+				 // Authenticate the Docker client to AWS ECR
                  withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                      sh '''
                      aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
@@ -95,19 +117,15 @@ pipeline {
                      '''
                  }
 
-                  // Build the Docker image using the specified Dockerfile
-                  sh 'docker build -f ./301247589_301276375_bright_aid_API/Dockerfile -t bright_aid_api .'
+                 // Build the Docker image using the specified Dockerfile
+                 sh 'docker build -f ./301247589_301276375_bright_aid_API/Dockerfile -t bright_aid_api .'
 
-                  // Tag the Docker image
-                  sh 'docker tag bright_aid_api:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
+                 // Tag the Docker image
+                 sh 'docker tag bright_aid_api:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
 
                  // Push the Docker image to AWS ECR
                  sh 'docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest'
-              }
-         }
-
-		 stage('Deploy to AWS ECS Service') {
-			 steps {
+				 
 				 // Update the ECS service with the new task definition
 				 sh '''
 				 aws ecs update-service \
