@@ -45,42 +45,36 @@ pipeline {
                 // Create tests here
                 echo 'Mock up Tests here'
 				
-						 // Prepare TestResults directory
-				sh 'mkdir -p TestResults'
+					script {
+				// Ensure JaCoCo tool is installed in Jenkins
+				def jacocoPath = tool name: 'JaCoCo', type: 'JaCoCoInstallation'
+				env.JACOCO_HOME = jacocoPath
+			}
+			
+			// Run tests with coverage enabled
+			sh '''
+				dotnet test --no-build --collect:"XPlat Code Coverage" \
+					--results-directory ./TestResults
+			'''
+			
+			// Convert the coverage data to JaCoCo XML format
+			sh '''
+				reportgenerator \
+					-reports:./TestResults/*/coverage.cobertura.xml \
+					-targetdir:./CoverageReport \
+					-reporttypes:JaCoCoXml
+			'''
 
-				// Run tests with code coverage
-				sh '''
-				dotnet test --results-directory ./TestResults --collect:"Code Coverage" \
-				-p:CollectCoverage=true \
-				-p:CoverletOutput=./TestResults/coverage.cobertura.xml \
-				-p:CoverletOutputFormat=cobertura
-				'''
-
-				// Debug: List contents of the workspace and TestResults folder
-				sh 'ls -la'
-				sh 'ls -la ./TestResults/'
-
-				// Generate coverage report if the file exists
-				sh '''
-				if [ -f ./TestResults/coverage.cobertura.xml ]; then
-					dotnet tool install --global dotnet-reportgenerator-globaltool --version '5.*'
-					reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./TestCoverageReport" -reporttypes:"HtmlInline_AzurePipelines"
-				else
-					echo "Error: coverage.cobertura.xml not found in ./TestResults/"
-					exit 1
-				fi
-				'''
-
-				// Publish the coverage report
-				publishHTML target: [
-					allowMissing: true,
-					alwaysLinkToLastBuild: true,
-					keepAll: true,
-					reportDir: 'TestCoverageReport',
-					reportFiles: 'index.html',
-					reportName: 'Code Coverage Report'
-				]
-				
+			// Archive the JaCoCo report for Jenkins
+			jacoco execPattern: 'CoverageReport/jacoco.xml', classPattern: '**/bin/**/*.class', sourcePattern: '**/src/main/java', exclusionPattern: ''
+			
+			// Publish the coverage results
+			publishHTML([allowMissing: false,
+						 alwaysLinkToLastBuild: true,
+						 keepAll: true,
+						 reportDir: './CoverageReport',
+						 reportFiles: 'index.html',
+						 reportName: 'Code Coverage Report'])		
             }
         }
         stage('Deliver to Dockerhub') {
