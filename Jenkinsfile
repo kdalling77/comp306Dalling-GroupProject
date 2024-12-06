@@ -62,6 +62,28 @@ pipeline {
             steps {
                 // Create tests here
                 echo 'Mock up Tests here'
+				
+				// Run unit tests and collect code coverage
+        sh 'dotnet test --no-build --collect:"Code Coverage" --results-directory ./TestResults'
+        
+        // Convert .coverage file to Cobertura XML (use ReportGenerator tool or a similar utility)
+        sh '''
+        dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.*
+        reportgenerator \
+            -reports:"./TestResults/**/coverage.cobertura.xml" \
+            -targetdir:"./TestCoverageReport" \
+            -reporttypes:HtmlInline_AzurePipelines
+        '''
+
+        // Archive the generated code coverage report
+        publishHTML target: [
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'TestCoverageReport',
+            reportFiles: 'index.html',
+            reportName: 'Code Coverage Report'
+        ]
             }
         }
         stage('Deliver to Dockerhub') {
