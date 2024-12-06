@@ -10,9 +10,6 @@ pipeline {
         DESIRED_COUNT = 2 // Desired Count of ECS Tasks
         DOCKER_CREDENTIALS_ID = 'my-docker-hub-credentials'
         DOCKER_REPO_NAME = 'kdalling/bright_aid_api'
-        SONAR_HOST_URL = 'http://localhost:9000/' // SonarQube host URL
-        SONAR_PROJECT_KEY = 'BrightAidAPI-Sonar' // SonarQube project key
-        SONAR_AUTH_TOKEN = credentials('sonarqube-token')
     }
     stages {
         stage('Checkout') {
@@ -21,33 +18,18 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kdalling77/comp306Dalling-GroupProject.git']])
             }
         }
-		
-        //    stage('SonarQube Analysis') {
-        //        steps {
-        //            script {
-        //                def scannerHome = tool name: 'SonarScanner for MSBuild'
-        //                withSonarQubeEnv() {
-        //                    bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" begin /k:\"bright_aid_api\""
-        //                    bat "dotnet build"
-        //                    bat "dotnet \"${scannerHome}\\SonarScanner.MSBuild.dll\" end"
-        //                }
-        //            }
-        //        }
-        //    }
-		
-		// 	.
-		stage('Static Code Analysis with SonarQube') {
+        // 
+        stage('Static Code Analysis with SonarQube') {
             steps {
                 // Run SonarQube analysis
                 withSonarQubeEnv('SonarQube') {
-                     sh 'dotnet sonarscanner begin -k:"BrightAidAPI-Sonar" -d:sonar.host.url="http://localhost:9000" -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
-					 sh 'dotnet build --configuration Release'
-					 sh 'dotnet test --no-build'
-					 sh 'dotnet sonarscanner end -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
-				}
+                    sh 'dotnet sonarscanner begin -k:"BrightAidAPI-Sonar" -d:sonar.host.url="http://localhost:9000" -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
+                    sh 'dotnet build --configuration Release'
+                    sh 'dotnet test --no-build'
+                    sh 'dotnet sonarscanner end -d:sonar.login="squ_d4ca2bb6886be7c7e33b160764bd64b8c1343172"'
+                }
             }
         }
-		
         stage('Build .NET Core Project') {
             steps {
                 // Restores the NuGet packages for the .NET Core project
