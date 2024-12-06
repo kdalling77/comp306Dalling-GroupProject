@@ -46,30 +46,6 @@ pipeline {
                 echo 'Mock up Tests here'
 				
 			
-			// Run tests with coverage enabled
-			sh '''
-				dotnet test --no-build --collect:"XPlat Code Coverage" \
-					--results-directory ./TestResults
-			'''
-			
-			// Convert the coverage data to JaCoCo XML format
-			sh '''
-				reportgenerator \
-					-reports:./TestResults/*/coverage.cobertura.xml \
-					-targetdir:./CoverageReport \
-					-reporttypes:JaCoCoXml
-			'''
-
-			// Archive the JaCoCo report for Jenkins
-			jacoco execPattern: 'CoverageReport/jacoco.xml', classPattern: '**/bin/**/*.class', sourcePattern: '**/src/main/java', exclusionPattern: ''
-			
-			// Publish the coverage results
-			publishHTML([allowMissing: false,
-						 alwaysLinkToLastBuild: true,
-						 keepAll: true,
-						 reportDir: './CoverageReport',
-						 reportFiles: 'index.html',
-						 reportName: 'Code Coverage Report'])		
             }
         }
         stage('Deliver to Dockerhub') {
