@@ -45,11 +45,6 @@ pipeline {
                 // Create tests here
                 echo 'Mock up Tests here'
 				
-					script {
-				// Ensure JaCoCo tool is installed in Jenkins
-				def jacocoPath = tool name: 'JaCoCo', type: 'JaCoCoInstallation'
-				env.JACOCO_HOME = jacocoPath
-			}
 			
 			// Run tests with coverage enabled
 			sh '''
