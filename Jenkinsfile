@@ -45,15 +45,30 @@ pipeline {
                 // Create tests here
                 echo 'Mock up Tests here'
 				
-				 // Run tests and generate coverage in Cobertura format
+						 // Prepare TestResults directory
+				sh 'mkdir -p TestResults'
+
+				// Run tests with code coverage
 				sh '''
-				dotnet test --no-build --results-directory ./TestResults --collect:"Code Coverage" -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/
+				dotnet test --results-directory ./TestResults --collect:"Code Coverage" \
+				-p:CollectCoverage=true \
+				-p:CoverletOutput=./TestResults/coverage.cobertura.xml \
+				-p:CoverletOutputFormat=cobertura
 				'''
 
-				// Generate coverage report from Cobertura file
+				// Debug: List contents of the workspace and TestResults folder
+				sh 'ls -la'
+				sh 'ls -la ./TestResults/'
+
+				// Generate coverage report if the file exists
 				sh '''
-				dotnet tool install --global dotnet-reportgenerator-globaltool --version '5.*'
-				reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./TestCoverageReport" -reporttypes:"HtmlInline_AzurePipelines"
+				if [ -f ./TestResults/coverage.cobertura.xml ]; then
+					dotnet tool install --global dotnet-reportgenerator-globaltool --version '5.*'
+					reportgenerator -reports:"./TestResults/coverage.cobertura.xml" -targetdir:"./TestCoverageReport" -reporttypes:"HtmlInline_AzurePipelines"
+				else
+					echo "Error: coverage.cobertura.xml not found in ./TestResults/"
+					exit 1
+				fi
 				'''
 
 				// Publish the coverage report
