@@ -42,10 +42,15 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                // Create tests here
-                echo 'Mock up Tests here'
-				
-			
+                // Run unit tests
+                sh '''
+                dotnet test --no-build --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" \
+                /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/coverage.cobertura.xml
+                '''
+                // Publish test results in Jenkins
+                junit '*/TestResults.trx'
+                // Publish code coverage in Jenkins
+                cobertura coberturaReportFile: '**/TestResults/coverage.cobertura.xml'
             }
         }
         stage('Deliver to Dockerhub') {
