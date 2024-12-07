@@ -47,7 +47,7 @@ pipeline {
                 // Publish test results in Jenkins
                 // junit '*/TestResults.trx'
                 // Publish code coverage in Jenkins
-                // cobertura coberturaReportFile: '**/TestResults/coverage.cobertura.xml'
+                cobertura coberturaReportFile: '**/TestResults/coverage.cobertura.xml'
             }
         }
 
