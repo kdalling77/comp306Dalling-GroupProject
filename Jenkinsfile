@@ -42,10 +42,15 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                // Run unit tests
+                // Run unit tests with proper formatting
                 sh '''
-                dotnet test --no-build --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" \
-                /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/coverage.cobertura.xml
+                dotnet test ./301247589_301276375_bright_aid_API.csproj \
+                    --no-build \
+                    --logger "trx;LogFileName=TestResults.trx" \
+                    --collect:"XPlat Code Coverage" \
+                    /p:CollectCoverage=true \
+                    /p:CoverletOutputFormat=cobertura \
+                    /p:CoverletOutput=TestResults/coverage.cobertura.xml
                 '''
                 // Publish test results in Jenkins
                 junit '*/TestResults.trx'
@@ -53,6 +58,7 @@ pipeline {
                 cobertura coberturaReportFile: '**/TestResults/coverage.cobertura.xml'
             }
         }
+
         // stage('Deliver to Dockerhub') {
         //     steps {
         //         // Login to dockerhub using credentials stored in Jenkins
