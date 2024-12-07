@@ -20,5 +20,7 @@
         public string? FinancialNeedDescription { get; set; } 
 
         public string? RegistrationDate { get; set; }
+        public string? Password { get; set; }
+
     }
 }

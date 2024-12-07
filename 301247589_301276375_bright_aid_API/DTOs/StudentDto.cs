@@ -23,5 +23,8 @@
 
         // System information
         public string? RegistrationDate { get; set; }
+
+        public string? Password { get; set; }
+
     }
 }
