@@ -20,4 +20,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+  <ProjectReference Include="..\301247589_301276375_bright_aid_API\301247589_301276375_bright_aid_API.csproj" />
+</ItemGroup>
+
+
 </Project>
