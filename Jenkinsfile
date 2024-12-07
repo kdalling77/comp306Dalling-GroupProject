@@ -30,26 +30,39 @@ pipeline {
         //         }
         //     }
         // }
+        
         stage('Build .NET Core Project') {
             steps {
                 // Restores the NuGet packages for the .NET Core project
+                echo 'Restoring dependencies...'
                 sh 'dotnet restore'
+                
                 // Builds the project in Release configuration
+                echo 'Building the project...'
                 sh 'dotnet build --configuration Release'
+                
                 // Publishes the application to a specified output directory
+                echo 'Publishing the application...'
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
+
         stage('Run Tests') {
             steps {
-                // Run unit tests with proper formatting
-                sh 'dotnet test --collect:"XPlat Code Coverage"'
-                // Publish test results in Jenkins
-                // junit '*/TestResults.trx'
-                // Publish code coverage in Jenkins
-                cobertura coberturaReportFile: '**/TestResults/coverage.cobertura.xml'
+                // Run unit tests with proper formatting and collect code coverage
+                echo 'Running unit tests with code coverage...'
+                sh 'dotnet test ./Tests/Tests.csproj --collect:"XPlat Code Coverage" --configuration Release --results-directory TestResults'
+
+                // Debugging to verify test results location
+                echo 'Checking test results directory...'
+                sh 'ls -la TestResults'
+
+                // Publish the coverage report in Jenkins
+                echo 'Publishing code coverage reports...'
+                cobertura coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml'
             }
         }
+
 
         // stage('Deliver to Dockerhub') {
         //     steps {
