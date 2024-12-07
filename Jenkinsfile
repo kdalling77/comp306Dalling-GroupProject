@@ -14,15 +14,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo "Checking out branch: ${env.BRANCH_NAME}"
+                echo "Checking out branch"
                 checkout scm
-                sh 'ls -la'
-                sh 'cd Tests && ls -la' // Confirm if the expected files are checked out
             }
         }
-
-
-        // 
+        
         // stage('Static Code Analysis with SonarQube') {
         //     steps {
         //         // Run SonarQube analysis
@@ -55,11 +51,7 @@ pipeline {
             steps {
                 // Run unit tests with proper formatting and collect code coverage
                 echo 'Running unit tests with code coverage...'
-                sh 'dotnet test ./Tests/Tests.csproj --collect:"XPlat Code Coverage" --configuration Release --results-directory TestResults'
-
-                // Debugging to verify test results location
-                echo 'Checking test results directory...'
-                sh 'ls -la TestResults'
+                sh 'dotnet test ./Tests/Tests.csproj --collect:"XPlat Code Coverage" --configuration Release --results-directory Tests/TestResults'
 
                 // Publish the coverage report in Jenkins
                 echo 'Publishing code coverage reports...'
