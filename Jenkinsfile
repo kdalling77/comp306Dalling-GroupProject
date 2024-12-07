@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     environment {
         AWS_REGION = 'us-east-1' // AWS Region
         AWS_ACCOUNT_ID = '149536454064' // AWS Account ID
@@ -12,13 +13,14 @@ pipeline {
         DOCKER_REPO_NAME = 'kdalling/bright_aid_api'
     }
     stages {
+
         stage('Checkout') {
             steps {
-                // Checkout the code from the specified Git repository and branch
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kdalling77/comp306Dalling-GroupProject.git']])
+                echo "Checking out branch"
+                checkout scm
             }
         }
-        // 
+        
         stage('Static Code Analysis with SonarQube') {
             steps {
                 // Run SonarQube analysis
@@ -30,24 +32,36 @@ pipeline {
                 }
             }
         }
+        
         stage('Build .NET Core Project') {
             steps {
                 // Restores the NuGet packages for the .NET Core project
+                echo 'Restoring dependencies...'
                 sh 'dotnet restore'
+                
                 // Builds the project in Release configuration
+                echo 'Building the project...'
                 sh 'dotnet build --configuration Release'
+                
                 // Publishes the application to a specified output directory
+                echo 'Publishing the application...'
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
+
         stage('Run Tests') {
             steps {
-                // Create tests here
-                echo 'Mock up Tests here'
-				
-			
+                // Run unit tests with proper formatting and collect code coverage
+                echo 'Running unit tests with code coverage...'
+                sh 'dotnet test ./Tests/Tests.csproj --collect:"XPlat Code Coverage" --configuration Release --results-directory Tests/TestResults'
+
+                // Publish the coverage report in Jenkins
+                echo 'Publishing code coverage reports...'
+                cobertura coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml'
             }
         }
+
+
         stage('Deliver to Dockerhub') {
             steps {
                 // Login to dockerhub using credentials stored in Jenkins
@@ -62,6 +76,7 @@ pipeline {
                 sh 'docker push $DOCKER_REPO_NAME:dev'
             }
         }
+
         stage('Deploy to DEV Env') {
             steps {
                 // Pull the image from Docker Hub to the local machine
@@ -72,16 +87,19 @@ pipeline {
                 sh 'docker run -itd --name bright_aid_api_container -p 3002:8080 $DOCKER_REPO_NAME:dev'
             }
         }
+
         stage('Deploy to QAT Env') {
             steps {
                 echo 'Mocked up QAT Env running successfully'
             }
         }
+        
         stage('Deploy to Staging Env') {
             steps {
                 echo 'Mocked up Staging Env running successfully'
             }
         }
+
         stage('Deploy to Production Env') {
             steps {
                 // Authenticate the Docker client to AWS ECR
