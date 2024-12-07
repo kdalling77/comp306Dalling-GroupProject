@@ -14,10 +14,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the specified Git repository and branch
+                echo 'Checking out repository...'
                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kdalling77/comp306Dalling-GroupProject.git']])
+                echo 'Listing workspace contents for debugging...'
+                sh 'ls -la'
             }
         }
+
         // 
         // stage('Static Code Analysis with SonarQube') {
         //     steps {
