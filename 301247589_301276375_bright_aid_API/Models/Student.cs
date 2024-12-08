@@ -33,5 +33,8 @@
         [System.ComponentModel.DefaultValue(true)] // Default value in the database
         public bool IsActive { get; set; } = true; // Default to true (active)
 
+        public string? Password { get; set; }
+
+
     }
 }

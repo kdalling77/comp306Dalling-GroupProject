@@ -22,5 +22,7 @@
         public bool? HasDonor { get; set; }
         public long? DonorId { get; set; }
         public string? RegistrationDate { get; set; }
+        public string? Password { get; set; }
+
     }
 }
