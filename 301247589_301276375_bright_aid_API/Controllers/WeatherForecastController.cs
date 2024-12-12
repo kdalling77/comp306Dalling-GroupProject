@@ -25,7 +25,7 @@ namespace _301247589_301276375_bright_aid_API.Controllers
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                 //TemperatureC = Random.Shared.Next(-20, 57),
-                TemperatureC = 6,
+                TemperatureC = 80,
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
